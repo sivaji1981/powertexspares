@@ -1,0 +1,246 @@
+
+@function str-replace-width($string, $search, $replace: '') {
+    $index: str-index($string, $search);
+  
+    @if $index {
+      @return str-slice($string, 1, $index - 1) + $replace + str-replace-width(str-slice($string, $index + str-length($search)), $search, $replace);
+    }
+  
+    @return $string;
+  }
+  
+@mixin generate-height($prefix, $max) {
+    $values: (0.5: 0.125rem, 1: 0.25rem, 1.5: 0.375rem, 2: 0.5rem, 2.5: 0.625rem, 3: 0.75rem, 3.5: 0.875rem, 4: 1rem);
+    $fractions: (
+      "1/2": 50%, 
+      "1/3": 33.33333%, "2/3": 66.66667%, 
+      "1/4": 25%, "2/4": 50%, "3/4": 75%, 
+      "1/5": 20%, "2/5": 40%, "3/5": 60%, "4/5": 80%, 
+      "1/6": 16.66667%, "2/6": 33.33333%, "3/6": 50%, "4/6": 66.66667%, "5/6": 83.33333%, 
+      "1/12": 8.33333%, "2/12": 16.66667%, "3/12": 25%, "4/12": 33.33333%, "5/12": 41.66667%, "6/12": 50%, "7/12": 58.33333%, "8/12": 66.66667%, "9/12": 75%, "10/12": 83.33333%, "11/12": 91.66667%
+    );
+  
+    @for $i from 0 through $max {
+      $index: if($i <= 8, $i / 2, if($i <= 12, $i - 4, if($i <= 16, ($i - 8) / 2, if($i <= 64, ($i - 16) / 4, ($i - 64) / 8))));
+      $value: if(map-has-key($values, $index), map-get($values, $index), ($index - 4) * 0.25rem);
+      $indexStr: $index;
+      @if $indexStr != round($indexStr) {
+        $indexStr: str-replace-width("#{indexStr}", ".", "-"); // replace dot with dash
+      }
+      $class: "#{$prefix}-#{$indexStr}";
+  
+      .#{$class} {
+        
+        height: $value;
+      }
+    }
+  
+    @each $fraction, $value in $fractions {
+      $class: "#{$prefix}-#{$fraction}";
+      $class: str-replace-width($class, "/", "-"); // replace slash with dash
+  
+      .#{$class} {
+        
+        height: $value;
+      }
+    }
+  }
+  
+  @include generate-height('h', 96);
+
+
+  
+  $min_h_fractions: (
+  0-5: 0.125rem,
+  1-5: 0.375rem,
+  2-5: 0.625rem,
+  3-5: 0.875rem
+);
+  @for $i from 0 through 96 {
+    .min-h-#{$i} {
+      min-height: $i * 0.25rem;
+    }
+  }
+  
+  @each $fraction, $percentage in $min_h_fractions {
+    .min-h-#{$fraction} {
+      min-height: $percentage;
+    }
+  }
+  
+  .min-h-px { min-height: 1px; }
+  .min-h-full { min-height: 100%; }
+  .min-h-screen { min-height: 100vh; }
+  .min-h-svh { min-height: 100svh; }
+  .min-h-lvh { min-height: 100lvh; }
+  .min-h-dvh { min-height: 100dvh; }
+  .min-h-min { min-height: min-content; }
+  .min-h-max { min-height: max-content; }
+  .min-h-fit { min-height: fit-content; }
+
+  $max_heights: (
+  px: 1px,
+  full: 100%,
+  screen: 100vh,
+  svh: 100svh,
+  lvh: 100lvh,
+  dvh: 100dvh,
+  min: min-content,
+  max: max-content,
+  fit: fit-content
+);
+
+@each $key, $value in $max_heights {
+  .max-h-#{$key} {
+    min-height: $value;
+  }
+}
+
+@each $fraction, $percentage in $min_h_fractions {
+  .max-h-#{$fraction} {
+    min-height: $percentage;
+  }
+}
+
+
+
+@mixin generate-dimensions($prefix, $max) {
+    $values: (0.5: 0.125rem, 1: 0.25rem, 1.5: 0.375rem, 2: 0.5rem, 2.5: 0.625rem, 3: 0.75rem, 3.5: 0.875rem, 4: 1rem);
+    $fractions: (
+      "1/2": 50%, 
+      "1/3": 33.33333%, "2/3": 66.66667%, 
+      "1/4": 25%, "2/4": 50%, "3/4": 75%, 
+      "1/5": 20%, "2/5": 40%, "3/5": 60%, "4/5": 80%, 
+      "1/6": 16.66667%, "2/6": 33.33333%, "3/6": 50%, "4/6": 66.66667%, "5/6": 83.33333%, 
+      "1/12": 8.33333%, "2/12": 16.66667%, "3/12": 25%, "4/12": 33.33333%, "5/12": 41.66667%, "6/12": 50%, "7/12": 58.33333%, "8/12": 66.66667%, "9/12": 75%, "10/12": 83.33333%, "11/12": 91.66667%
+    );
+  
+    @for $i from 0 through $max {
+      $index: if($i <= 8, $i / 2, if($i <= 12, $i - 4, if($i <= 16, ($i - 8) / 2, if($i <= 64, ($i - 16) / 4, ($i - 64) / 8))));
+      $value: if(map-has-key($values, $index), map-get($values, $index), ($index - 4) * 0.25rem);
+      $indexStr: $index;
+      @if $indexStr != round($indexStr) {
+        $indexStr: str-replace-width("#{indexStr}", ".", "-"); // replace dot with dash
+      }
+      $class: "#{$prefix}-#{$indexStr}";
+  
+      .#{$class} {
+        width: $value;
+        height: $value;
+      }
+    }
+  
+    @each $fraction, $value in $fractions {
+      $class: "#{$prefix}-#{$fraction}";
+      $class: str-replace-width($class, "/", "-"); // replace slash with dash
+  
+      .#{$class} {
+        width: $value;
+        height: $value;
+      }
+    }
+  }
+  
+  
+  
+  @include generate-dimensions('size', 96);
+
+  $spaces: (
+  0: 0px,
+  0-5: 0.125rem,
+  1: 0.25rem,
+  1-5: 0.375rem,
+  2: 0.5rem,
+  2-5: 0.625rem,
+  3: 0.75rem,
+  3-5: 0.875rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  7: 1.75rem,
+  8: 2rem,
+  9: 2.25rem,
+  10: 2.5rem,
+  11: 2.75rem,
+  12: 3rem,
+  14: 3.5rem,
+  16: 4rem,
+  20: 5rem,
+  24: 6rem,
+  28: 7rem,
+  32: 8rem,
+  36: 9rem,
+  40: 10rem,
+  44: 11rem,
+  48: 12rem,
+  52: 13rem,
+  56: 14rem,
+  60: 15rem,
+  64: 16rem,
+  72: 18rem,
+  80: 20rem,
+  96: 24rem,
+  px: 1px
+);
+
+@each $key, $value in $spaces {
+  .space-x-#{$key} {> * + * {margin-left: $value;}}
+  .space-y-#{$key} {> * + * {margin-top: $value;}}
+}
+
+.space-y-reverse > * + * {--tw-space-y-reverse: 1;}
+.space-x-reverse > * + * {--tw-space-x-reverse: 1;}
+
+$spaces: (
+  0: 0px,
+  px: 1px,
+  0-5: 0.125rem,
+  1: 0.25rem,
+  1-5: 0.375rem,
+  2: 0.5rem,
+  2-5: 0.625rem,
+  3: 0.75rem,
+  3-5: 0.875rem,
+  4: 1rem,
+  5: 1.25rem,
+  6: 1.5rem,
+  7: 1.75rem,
+  8: 2rem,
+  9: 2.25rem,
+  10: 2.5rem,
+  11: 2.75rem,
+  12: 3rem,
+  14: 3.5rem,
+  16: 4rem,
+  20: 5rem,
+  24: 6rem,
+  28: 7rem,
+  32: 8rem,
+  36: 9rem,
+  40: 10rem,
+  44: 11rem,
+  48: 12rem,
+  52: 13rem,
+  56: 14rem,
+  60: 15rem,
+  64: 16rem,
+  72: 18rem,
+  80: 20rem,
+  96: 24rem
+);
+
+@mixin generate-gap-classes($spaces) {
+  @each $key, $value in $spaces {
+    .gap-#{$key} {
+      gap: $value;
+    }
+    .gap-x-#{$key} {
+      column-gap: $value;
+    }
+    .gap-y-#{$key} {
+      row-gap: $value;
+    }
+  }
+}
+
+@include generate-gap-classes(96)
